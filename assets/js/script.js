@@ -1,6 +1,26 @@
 'use strict';
 
 
+const exploreBtn = document.getElementById('explore-btn');
+
+if (exploreBtn) {
+  exploreBtn.addEventListener('click', function() {
+    const frontPage = document.getElementById('front-page');
+    const mainContent = document.getElementById('main-content');
+    
+    if (frontPage && mainContent) {
+      // Get the height of the front page
+      const scrollDistance = frontPage.offsetHeight;
+      
+      // Smooth scroll using window.scrollTo
+      window.scrollTo({
+        top: scrollDistance,
+        behavior: 'smooth'
+      });
+    }
+  });
+}
+
 
 // element toggle function
 const elementToggleFunc = function (elem) { elem.classList.toggle("active"); }
@@ -141,6 +161,7 @@ const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
 // add event to all nav link
+// add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
 
@@ -148,7 +169,11 @@ for (let i = 0; i < navigationLinks.length; i++) {
       if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
         pages[i].classList.add("active");
         navigationLinks[i].classList.add("active");
-        window.scrollTo(0, 0);
+        // Scroll to main content area instead of top
+        const mainContent = document.getElementById('main-content');
+        if (mainContent) {
+          mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       } else {
         pages[i].classList.remove("active");
         navigationLinks[i].classList.remove("active");
