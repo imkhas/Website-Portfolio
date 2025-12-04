@@ -1,6 +1,7 @@
 'use strict';
 
 
+
 const exploreBtn = document.getElementById('explore-btn');
 
 if (exploreBtn) {
@@ -12,11 +13,31 @@ if (exploreBtn) {
       // Get the height of the front page
       const scrollDistance = frontPage.offsetHeight;
       
-      // Smooth scroll using window.scrollTo
-      window.scrollTo({
-        top: scrollDistance,
-        behavior: 'smooth'
-      });
+      // Custom smooth scroll with easing
+      const startPosition = window.pageYOffset;
+      const duration = 1500; // 1.5 seconds - adjust this for slower/faster scroll
+      let startTime = null;
+      
+      function easeInOutCubic(t) {
+        return t < 0.5 
+          ? 4 * t * t * t 
+          : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      }
+      
+      function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = easeInOutCubic(progress);
+        
+        window.scrollTo(0, startPosition + (scrollDistance * ease));
+        
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animation);
+        }
+      }
+      
+      requestAnimationFrame(animation);
     }
   });
 }
