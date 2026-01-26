@@ -14,27 +14,20 @@ const Contact = () => {
             message: formData.get('message'),
         };
 
-        // Environment variables for security
-        const BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
-        const CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
-
-        const text = `New Portfolio Message:\n\nName: ${data.name}\nEmail: ${data.email}\nMessage: ${data.message}`;
-
         try {
-            const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            // Call our new secure Netlify Function instead of Telegram directly
+            const response = await fetch('/.netlify/functions/sendTelegram', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: text,
-                }),
+                body: JSON.stringify(data),
             });
 
             if (response.ok) {
                 setStatus('Message sent successfully!');
                 e.target.reset();
             } else {
-                setStatus('Failed to send message. Please check bot configuration.');
+                const result = await response.json();
+                setStatus(`Failed to send message: ${result.error || 'Unknown error'}`);
             }
         } catch (error) {
             console.error('Error sending message:', error);
