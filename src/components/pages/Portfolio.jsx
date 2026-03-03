@@ -41,7 +41,21 @@ const Portfolio = () => {
             link: 'https://github.com/imkhas/Machine-Learning.git'
         },
         {
-            title: 'Procurement Analytics Dashboard',
+            title: 'Smart Internal Workflow Approval System',
+            category: 'web development',
+            owner: 'Muhamad Imran',
+            img: '/assets/images/project-9.png',
+            link: 'https://github.com/imkhas/smart-workflow-system.git'
+        },
+        {
+            title: 'Workflow Studio: AI-Powered Automation Engine',
+            category: 'web development',
+            owner: 'Muhamad Imran',
+            img: '/assets/images/project-8.png',
+            link: 'https://github.com/Wafiqsw/ai-workflow-generator.git'
+        },
+        {
+            title: 'Billionaire Analysis Dashboard',
             category: 'dashboards',
             owner: 'Muhamad Imran',
             img: '/assets/images/project-6.png',
