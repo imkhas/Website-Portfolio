@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
 
-const GITHUB_USERNAME = 'imkhas'
-
 const Portfolio = () => {
   const [repos, setRepos] = useState([])
   const [activeFilter, setActiveFilter] = useState('all')
@@ -11,36 +9,14 @@ const Portfolio = () => {
   useEffect(() => {
     const fetchRepos = async () => {
       try {
-        setLoading(true)
-        // Try pinned repos via Netlify function first
         const res = await fetch('/.netlify/functions/getPinnedRepos')
-        if (res.ok) {
-          const data = await res.json()
-          if (Array.isArray(data) && data.length > 0) {
-            setRepos(data)
-            return
-          }
-        }
-      } catch {
-        // Netlify function not available — fall through to REST API
-      }
-
-      // Fallback: fetch all public repos via GitHub REST API
-      try {
-        const res = await fetch(
-          `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=50&type=public`
-        )
-        if (!res.ok) throw new Error('GitHub API error')
+        if (!res.ok) throw new Error(`HTTP error: ${res.status}`)
         const data = await res.json()
-        setRepos(
-          data.map((r) => ({
-            name: r.name,
-            description: r.description,
-            url: r.html_url,
-            language: r.language,
-            stars: r.stargazers_count,
-          }))
-        )
+        if (Array.isArray(data)) {
+          setRepos(data)
+        } else {
+          throw new Error('Unexpected response format')
+        }
       } catch (err) {
         setError(err.message)
       } finally {
@@ -71,6 +47,18 @@ const Portfolio = () => {
       <div>
         <p className="section-title">My Projects</p>
         <p style={{ color: '#888', fontSize: 14 }}>Could not load projects: {error}</p>
+      </div>
+    )
+  }
+
+  if (repos.length === 0) {
+    return (
+      <div>
+        <p className="section-title">My Projects</p>
+        <p style={{ color: '#888', fontSize: 14 }}>
+          No pinned repositories found. Pin some repos on GitHub or add a{' '}
+          <code>GITHUB_TOKEN</code> environment variable in Netlify.
+        </p>
       </div>
     )
   }

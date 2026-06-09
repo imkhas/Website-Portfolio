@@ -42,6 +42,7 @@ export const handler = async () => {
     const data = await res.json()
 
     if (data.errors) {
+      console.error('GitHub GraphQL errors:', JSON.stringify(data.errors))
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },

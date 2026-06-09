@@ -3,11 +3,7 @@
   publish = "dist"
 
 [dev]
-  framework = "vite"
-  command = "vite"
-  port = 8888
   targetPort = 5173
-  publish = "dist"
 
 [[redirects]]
   from = "/*"
