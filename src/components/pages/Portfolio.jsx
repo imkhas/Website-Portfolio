@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 
 const Portfolio = () => {
   const [repos, setRepos] = useState([])
-  const [activeFilter, setActiveFilter] = useState('all')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -25,13 +24,6 @@ const Portfolio = () => {
     }
     fetchRepos()
   }, [])
-
-  const languages = [...new Set(repos.map((r) => r.language).filter(Boolean))].sort()
-  const categories = ['all', ...languages]
-
-  const filteredRepos = activeFilter === 'all'
-    ? repos
-    : repos.filter((r) => r.language === activeFilter)
 
   if (loading) {
     return (
@@ -67,20 +59,15 @@ const Portfolio = () => {
     <div>
       <p className="section-title">My Projects</p>
 
-      <div className="filters">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            className={`filter-pill ${activeFilter === cat ? 'active' : ''}`}
-            onClick={() => setActiveFilter(cat)}
-          >
-            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-          </button>
-        ))}
+      <div className="github-streak">
+        <img
+          src="https://github-readme-streak-stats.herokuapp.com/?user=imkhas&theme=dark&hide_border=true"
+          alt="GitHub Streak"
+        />
       </div>
 
       <div className="projects-grid">
-        {filteredRepos.map((repo) => (
+        {repos.map((repo) => (
           <a
             key={repo.name}
             href={repo.url}
