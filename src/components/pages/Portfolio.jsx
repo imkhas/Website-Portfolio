@@ -59,13 +59,6 @@ const Portfolio = () => {
     <div>
       <p className="section-title">My Projects</p>
 
-      <div className="github-streak">
-        <img
-          src="https://github-readme-streak-stats.herokuapp.com/?user=imkhas&theme=dark&hide_border=true"
-          alt="GitHub Streak"
-        />
-      </div>
-
       <div className="projects-grid">
         {repos.map((repo) => (
           <a
@@ -97,6 +90,13 @@ const Portfolio = () => {
             </div>
           </a>
         ))}
+      </div>
+
+      <div className="github-contribution">
+        <img
+          src="https://ghchart.rshah.org/imkhas"
+          alt="GitHub Contribution Chart"
+        />
       </div>
     </div>
   )
