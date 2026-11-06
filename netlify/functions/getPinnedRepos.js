@@ -3,9 +3,11 @@ export const handler = async () => {
 
   if (!token) {
     return {
-      statusCode: 200,
+      statusCode: 503,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify([]),
+      body: JSON.stringify({
+        error: 'GITHUB_TOKEN is not configured. Add it to .env for local dev or the Netlify dashboard for production.',
+      }),
     }
   }
 
@@ -21,6 +23,19 @@ export const handler = async () => {
                 url
                 language: primaryLanguage { name }
                 stargazerCount
+                languages(first: 10, orderBy: { field: SIZE, direction: DESC }) {
+                  nodes {
+                    name
+                    color
+                  }
+                }
+                repositoryTopics(first: 10) {
+                  nodes {
+                    topic {
+                      name
+                    }
+                  }
+                }
               }
             }
           }
@@ -44,9 +59,11 @@ export const handler = async () => {
     if (data.errors) {
       console.error('GitHub GraphQL errors:', JSON.stringify(data.errors))
       return {
-        statusCode: 200,
+        statusCode: 502,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify([]),
+        body: JSON.stringify({
+          error: 'GitHub rejected the request. Check that GITHUB_TOKEN is valid and can read public repos.',
+        }),
       }
     }
 
@@ -56,6 +73,11 @@ export const handler = async () => {
         description: repo.description,
         url: repo.url,
         language: repo.language?.name || null,
+        languages: (repo.languages?.nodes || []).map((lang) => ({
+          name: lang.name,
+          color: lang.color,
+        })),
+        topics: (repo.repositoryTopics?.nodes || []).map((node) => node.topic.name),
         stars: repo.stargazerCount,
       })
     )
@@ -67,9 +89,9 @@ export const handler = async () => {
     }
   } catch {
     return {
-      statusCode: 200,
+      statusCode: 502,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify([]),
+      body: JSON.stringify({ error: 'Could not reach the GitHub API. Try again in a moment.' }),
     }
   }
 }

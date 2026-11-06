@@ -1,11 +1,16 @@
 import React, { useState } from 'react'
 
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 const Contact = () => {
   const [status, setStatus] = useState('')
+  const [tone, setTone] = useState('')
+  const [errors, setErrors] = useState({})
+
+  const clear = (field) => setErrors((prev) => (prev[field] ? { ...prev, [field]: '' } : prev))
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setStatus('Sending...')
 
     const formData = new FormData(e.target)
     const data = {
@@ -13,6 +18,21 @@ const Contact = () => {
       email: formData.get('from_email'),
       message: formData.get('message'),
     }
+
+    const next = {}
+    if (!data.name.trim()) next.name = 'Please enter your name.'
+    if (!EMAIL.test(data.email.trim())) next.email = 'Please enter a valid email address.'
+    if (data.message.trim().length < 10) next.message = 'Please write at least 10 characters.'
+
+    setErrors(next)
+    if (Object.keys(next).length) {
+      setStatus('')
+      setTone('')
+      return
+    }
+
+    setStatus('Sending...')
+    setTone('')
 
     try {
       const response = await fetch('/.netlify/functions/sendTelegram', {
@@ -22,15 +42,18 @@ const Contact = () => {
       })
 
       if (response.ok) {
-        setStatus('Message sent successfully!')
+        setStatus('Message sent — thank you! I will get back to you soon.')
+        setTone('success')
         e.target.reset()
       } else {
-        const result = await response.json()
+        const result = await response.json().catch(() => ({}))
         setStatus(`Failed: ${result.error || 'Unknown error'}`)
+        setTone('error')
       }
     } catch (error) {
       console.error('Error sending message:', error)
       setStatus('An error occurred. Please try again later.')
+      setTone('error')
     }
   }
 
@@ -48,7 +71,7 @@ const Contact = () => {
       </div>
 
       <div className="contact-layout">
-        <div className="contact-info">
+        <div className="contact-info" data-stagger>
           <h3>Let's work together</h3>
           <p>Have a project in mind or just want to say hello? Drop me a message and I'll get back to you as soon as possible.</p>
           <div className="contact-detail">
@@ -65,12 +88,38 @@ const Contact = () => {
           </div>
         </div>
 
-        <form className="contact-form" onSubmit={handleSubmit}>
-          <input type="text" name="from_name" className="contact-input" placeholder="Full name" required />
-          <input type="email" name="from_email" className="contact-input" placeholder="Email address" required />
-          <textarea name="message" className="contact-input" placeholder="Your Message" required></textarea>
+        <form className="contact-form" onSubmit={handleSubmit} noValidate data-stagger>
+          <input
+            type="text"
+            name="from_name"
+            className={`contact-input${errors.name ? ' invalid' : ''}`}
+            placeholder="Full name"
+            aria-invalid={!!errors.name}
+            onChange={() => clear('name')}
+          />
+          {errors.name && <span className="field-error">{errors.name}</span>}
+
+          <input
+            type="email"
+            name="from_email"
+            className={`contact-input${errors.email ? ' invalid' : ''}`}
+            placeholder="Email address"
+            aria-invalid={!!errors.email}
+            onChange={() => clear('email')}
+          />
+          {errors.email && <span className="field-error">{errors.email}</span>}
+
+          <textarea
+            name="message"
+            className={`contact-input${errors.message ? ' invalid' : ''}`}
+            placeholder="Your Message"
+            aria-invalid={!!errors.message}
+            onChange={() => clear('message')}
+          />
+          {errors.message && <span className="field-error">{errors.message}</span>}
+
           <button className="contact-btn" type="submit">Send Message</button>
-          {status && <p className="contact-status">{status}</p>}
+          {status && <p className={`contact-status ${tone}`}>{status}</p>}
         </form>
       </div>
     </div>

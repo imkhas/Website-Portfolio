@@ -2,11 +2,11 @@ import React from 'react'
 
 const Resume = () => (
   <div>
-    <p className="section-title">Resume</p>
+    <p className="section-title">Background</p>
 
     <h3 className="section-heading">Work Experience</h3>
 
-    <div className="timeline">
+    <div className="timeline" data-stagger>
       <div className="timeline-item">
         <h3>AI Engineer Internship</h3>
         <div className="timeline-date">May 2026 - Present</div>
@@ -48,14 +48,14 @@ const Resume = () => (
 
     <h3 className="section-heading" style={{ marginTop: 60 }}>Education</h3>
 
-    <div className="timeline">
+    <div className="timeline" data-stagger>
       <div className="timeline-item">
         <h3>UNIVERSITI TEKNOLOGI MARA</h3>
-        <div className="timeline-date">2022 - Present</div>
+        <div className="timeline-date">2022 - March 2026</div>
         <div className="timeline-org">
           Bachelor Of Information Systems (Hons.) Intelligent Systems Engineering<br />
           Shah Alam, MY<br />
-          CGPA: 3.41
+          CGPA: 3.48
         </div>
         <p><strong>Relevant Coursework:</strong> Machine Learning, Data Mining, Time Series Analysis and Forecasting, Optimization Algorithms and Applications, Fuzzy Logic, Programming For Data Science</p>
       </div>
